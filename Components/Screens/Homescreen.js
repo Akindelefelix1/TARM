@@ -18,6 +18,202 @@ import {COLORS, FONTS, SIZES} from '../Theme';
 import DropDown from '../Constant/DropDown';
 import {Context} from '../../Context';
 
+const NewParticipants = ({
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
+  email,
+  setEmail,
+  phoneNumber,
+  setPhoneNumber,
+  gender,
+  setGender,
+  occupation,
+  setOccupation,
+  country,
+  setCountry,
+}) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  return (
+    <View style={styles.centeredView}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.centeredView}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 15,
+                }}>
+                <Text style={styles.modalText}>ADD NEW PARTICIPANTS</Text>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(!modalVisible)}>
+                  <Image
+                    style={{width: SIZES.base * 2, height: SIZES.base * 2}}
+                    source={require('../Assets/Icons/Abort.png')}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text style={styles.texts}>First Name</Text>
+                <Text style={styles.texts}>Last Name</Text>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <TextInput
+                  placeholder="First Name"
+                  placeholderTextColor="gray"
+                  value={firstName}
+                  onChangeText={text => setFirstName(text)}
+                  style={styles.textInput}
+                />
+                <TextInput
+                  placeholder="Last Name"
+                  placeholderTextColor="gray"
+                  value={lastName}
+                  onChangeText={setLastName}
+                  style={styles.textInput}
+                />
+              </View>
+
+              <Text style={styles.texts}>Email Address</Text>
+              <TextInput
+                placeholder="Email Address"
+                placeholderTextColor="gray"
+                value={email}
+                onChangeText={setEmail}
+                style={styles.textInput2}
+              />
+
+              <Text style={styles.texts}>Phone Number</Text>
+              <TextInput
+                placeholder="Phone Number"
+                placeholderTextColor="gray"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                style={styles.textInput2}
+              />
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text style={styles.texts}>Country</Text>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <TextInput
+                  placeholder="Country"
+                  placeholderTextColor="gray"
+                  value={country}
+                  onChangeText={setCountry}
+                  style={styles.textInput2}
+                />
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <View>
+                  <Text style={styles.texts}>Gender</Text>
+                  <DropDown
+                    details={genderR}
+                    selectedValue={gender}
+                    onSelect={setGender}
+                  />
+                </View>
+
+                <View>
+                  <Text style={styles.texts}>Marital Status</Text>
+                  <DropDown details={maritalStatus} />
+                </View>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <View>
+                  <Text style={styles.texts}>Occupation</Text>
+                  <TextInput
+                    placeholder="Occupation"
+                    placeholderTextColor="gray"
+                    value={occupation}
+                    onChangeText={setOccupation}
+                    style={styles.textInput2}
+                  />
+                </View>
+
+                <View>
+                  <Text style={styles.texts}>Affliated Center</Text>
+                  <DropDown details={affiliatedCenter} />
+                </View>
+              </View>
+
+              <View>
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={COLORS.primary}
+                    style={{marginTop: SIZES.base * 2}}
+                  />
+                ) : (
+                  <TouchableOpacity
+                    onPress={handleSubmit}
+                    style={{
+                      alignItems: 'center',
+                      backgroundColor: COLORS.primary,
+                      marginHorizontal: SIZES.h1,
+                      marginTop: SIZES.h1 * 2,
+                      borderRadius: SIZES.radius * 2,
+                      paddingVertical: SIZES.base * 0.8,
+                    }}>
+                    <Text
+                      style={{
+                        color: COLORS.white,
+                        ...FONTS.h3,
+                      }}>
+                      Save Participant
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </KeyboardAvoidingView>
+    </View>
+  );
+};
+
 export default function Homescreen({navigation, route}) {
   const {eventId} = route.params;
 
@@ -25,7 +221,6 @@ export default function Homescreen({navigation, route}) {
   const {navigate} = useNavigation();
 
   const isDarkMode = useColorScheme() === 'dark';
-  const [modalVisible, setModalVisible] = useState(false);
   const [welcomeMessage, setWelcomeMessage] = useState('');
 
   const [firstName, setFirstName] = useState('');
@@ -44,22 +239,6 @@ export default function Homescreen({navigation, route}) {
   const [isSuccessAlertVisible, setIsSuccessAlertVisible] = useState(false);
   const [isErrorAlertVisible, setIsErrorAlertVisible] = useState(false);
 
-  // const [inputChanges, setInputChanges] = useState({
-  //   firstName: '',
-  //   lastName: '',
-  //   email: '',
-  //   phoneNumber: '',
-  //   country: '',
-  //   occupation: '',
-  // });
-
-  // const handleInputChange = (key, value) => {
-  //   setInputChanges(prevState => ({
-  //     ...prevState,
-  //     [key]: value,
-  //   }));
-  // };
-
   useEffect(() => {
     setWelcomeMessage('Welcome back!');
     setTimeout(() => {
@@ -72,185 +251,6 @@ export default function Homescreen({navigation, route}) {
       {text: 'Cancel', style: 'cancel'},
       {text: 'Log Out', onPress: () => signOut()},
     ]);
-  };
-
-  const NewParticipants = () => {
-    return (
-      <View style={styles.centeredView}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(!modalVisible);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginBottom: 15,
-                  }}>
-                  <Text style={styles.modalText}>ADD NEW PARTICIPANTS</Text>
-                  <TouchableOpacity
-                    onPress={() => setModalVisible(!modalVisible)}>
-                    <Image
-                      style={{width: SIZES.base * 2, height: SIZES.base * 2}}
-                      source={require('../Assets/Icons/Abort.png')}
-                    />
-                  </TouchableOpacity>
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Text style={styles.texts}>First Name</Text>
-                  <Text style={styles.texts}>Last Name</Text>
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <TextInput
-                    placeholder="First Name"
-                    placeholderTextColor="gray"
-                    value={firstName}
-                    onChangeText={text => setFirstName(text)}
-                    style={styles.textInput}
-                  />
-                  <TextInput
-                    placeholder="Last Name"
-                    placeholderTextColor="gray"
-                    value={lastName}
-                    onChangeText={setLastName}
-                    style={styles.textInput}
-                  />
-                </View>
-
-                <Text style={styles.texts}>Email Address</Text>
-                <TextInput
-                  placeholder="Email Address"
-                  placeholderTextColor="gray"
-                  value={email}
-                  onChangeText={setEmail}
-                  style={styles.textInput2}
-                />
-
-                <Text style={styles.texts}>Phone Number</Text>
-                <TextInput
-                  placeholder="Phone Number"
-                  placeholderTextColor="gray"
-                  value={phoneNumber}
-                  onChangeText={setPhoneNumber}
-                  style={styles.textInput2}
-                />
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Text style={styles.texts}>Country</Text>
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <TextInput
-                    placeholder="Country"
-                    placeholderTextColor="gray"
-                    value={country}
-                    onChangeText={setCountry}
-                    style={styles.textInput2}
-                  />
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View>
-                    <Text style={styles.texts}>Gender</Text>
-                    <DropDown
-                      details={genderR}
-                      selectedValue={gender}
-                      onSelect={setGender}
-                    />
-                  </View>
-
-                  <View>
-                    <Text style={styles.texts}>Marital Status</Text>
-                    <DropDown details={maritalStatus} />
-                  </View>
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View>
-                    <Text style={styles.texts}>Occupation</Text>
-                    <TextInput
-                      placeholder="Occupation"
-                      placeholderTextColor="gray"
-                      value={occupation}
-                      onChangeText={setOccupation}
-                      style={styles.textInput2}
-                    />
-                  </View>
-
-                  <View>
-                    <Text style={styles.texts}>Affliated Center</Text>
-                    <DropDown details={affiliatedCenter} />
-                  </View>
-                </View>
-
-                <View>
-                  {isLoading ? (
-                    <ActivityIndicator
-                      size="large"
-                      color={COLORS.primary}
-                      style={{marginTop: SIZES.base * 2}}
-                    />
-                  ) : (
-                    <TouchableOpacity
-                      onPress={handleSubmit}
-                      style={{
-                        alignItems: 'center',
-                        backgroundColor: COLORS.primary,
-                        marginHorizontal: SIZES.h1,
-                        marginTop: SIZES.h1 * 2,
-                        borderRadius: SIZES.radius * 2,
-                        paddingVertical: SIZES.base * 0.8,
-                      }}>
-                      <Text
-                        style={{
-                          color: COLORS.white,
-                          ...FONTS.h3,
-                        }}>
-                        Save Participant
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              </View>
-            </View>
-          </Modal>
-        </KeyboardAvoidingView>
-      </View>
-    );
   };
 
   const CheckIn = () =>
